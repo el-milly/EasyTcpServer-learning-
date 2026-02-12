@@ -34,21 +34,30 @@ int main()
 	//	struct addrinfo * ai_next
 	// }
 
-	printf("Bind process is started...\n");
-
-	// we should create a pointer to our struct
-	// this process called "bind"
+	// we should create a pointer to struct
 	struct addrinfo *bind_address;
-
 	// now we use getaddrinfo() to fill our structere (addrinfo) with new values
 	getaddrinfo(0, "8080", &hints, &bind_address); // 8080 is port of the server 
-	printf("Completed!\n");
 	// now we can create a socket for our server via socket() command
 	// So, we create integer valuable that includes socket() function
 	printf("Creating socket...\n");
-	int socket_listener = socket((*bind_address).ai_family, (*bind_address).ai_socktype,(*bind_address).ai_flags); // also, you can use 0 instead of ai_flags (I use to better understanding)
+	int socket_l = socket((*bind_address).ai_family, (*bind_address).ai_socktype, 0); // socket()
 	printf("Completed!\n");
 
+	printf("Bind...\n"); // Now we should bind ip address to socket by bind() function
 	
+	int server_bind = bind(socket_l, (*bind_address).ai_addr, (*bind_address).ai_addrlen);
+	printf("Completed");
+	freeaddrinfo(bind_address); // let's free out memory because we don't want to make memory leaks
+	printf("Starting to listen for new connections...\n"); // We are "listening" for incoming requests from users
+	
+	int server_listener = listen(socket_l, 10); //	listen(int socket, backlog) baclog is maximum queque of users
+	
+	printf("Completed!\n");
+	printf("Connecting...\n");
+	struct sockaddr client_addr; // let's create struct for our client
+	socklen_t addr_len = sizeof(client_addr); // we initzialize a client address via <sys/socket.h>
 
+	int server_accept = accept(socket_l,&client_addr, &addr_len ); // accept(socket, client address, size of client address)
+	printf("Completed!\n");
 }
