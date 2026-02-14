@@ -58,6 +58,30 @@ int main()
 	struct sockaddr client_addr; // let's create struct for our client
 	socklen_t addr_len = sizeof(client_addr); // we initzialize a client address via <sys/socket.h>
 
-	int server_accept = accept(socket_l,&client_addr, &addr_len ); // accept(socket, client address, size of client address)
+	int client_socket = accept(socket_l,&client_addr, &addr_len ); // accept(socket, client address, size of client address)
+	printf("Completed!\n");
+
+	printf("Receiving...\n");
+	char client_buffer[100]; //store data that we got from client
+	socklen_t client_size = sizeof(client_buffer); // get size of buffer
+	getnameinfo((struct sockaddr*) &client_addr,addr_len,client_buffer,client_size, 0,0,NI_NUMERICHOST); // we get info about our client 0,0 - (we don't care about host/port name)
+													     // NI_NUMERICHOST - we need just host in number format like 127.0.0.1
+	printf("Completed!\n");
+	printf("%s\n", client_buffer); // we should get localhost if we run it on local machine
+	
+	printf("Sending data...\n");
+
+	const char *response = 
+		"HTTP/1.1 200OK\r\n"
+		"Connection: close\r\n"
+		"Content-Type: text/plain\r\n\r\n"
+		"Hello, client!";
+
+	int server_send = send(client_socket, response, strlen(response),0);
+
+	printf("Sent %d of %d bytes.\n", server_send, (int)strlen(response));
+	printf("Completed!\n");
+	printf("Closing connection...\n");
+	close(socket_l); 
 	printf("Completed!\n");
 }
