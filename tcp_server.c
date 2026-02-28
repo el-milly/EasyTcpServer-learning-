@@ -64,8 +64,10 @@ int main()
 	printf("Receiving...\n");
 	char client_buffer[100]; //store data that we got from client
 	socklen_t client_size = sizeof(client_buffer); // get size of buffer
+	
 	getnameinfo((struct sockaddr*) &client_addr,addr_len,client_buffer,client_size, 0,0,NI_NUMERICHOST); // we get info about our client 0,0 - (we don't care about host/port name)
-													     // NI_NUMERICHOST - we need just host in number format like 127.0.0.1
+	char read[1024];												     // NI_NUMERICHOST - we need just host in number format like 127.0.0.1
+	int bytes_received = recv(socket_l,read,1024,0);
 	printf("Completed!\n");
 	printf("%s\n", client_buffer); // we should get localhost if we run it on local machine
 	
